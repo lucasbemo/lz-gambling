@@ -10,4 +10,7 @@ public class GamblingApp {
 		SpringApplication.run(GamblingApp.class, args);
 	}
 
+	public static void sum(int i, int j) {
+		
+	}
 }

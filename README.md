@@ -21,6 +21,11 @@ user = postgres
 pass = 12345
 ```
 
+Access pgAdmin
+```
+http://localhost:5050/browser/
+```
+
 Create a Database inside paAdmin called ***GAMBLING***
 
 Some helpfully sql scripts

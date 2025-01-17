@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UpdateAllMegaSenaDrawsUseCase implements UpdateAllMegaSenaDraws {
+public class ImportAllMegaSenaDrawsUseCase implements ImportAllMegaSenaDraws {
 
     private final HandleMegaSenaFile storageService;
     private final MegaSenaDrawsUpdateHistorPort megaSenaDrawsUpdateHistorPort;
     private final MegaSenaDrawsPort megaSenaDrawsPort;
 
-    public UpdateAllMegaSenaDrawsUseCase(final HandleMegaSenaFile storageService
+    public ImportAllMegaSenaDrawsUseCase(final HandleMegaSenaFile storageService
             , final MegaSenaDrawsUpdateHistorPort megaSenaDrawsUpdateHistorPort
             , final MegaSenaDrawsPort megaSenaDrawsPort) {
         this.storageService = storageService;
@@ -39,24 +39,29 @@ public class UpdateAllMegaSenaDrawsUseCase implements UpdateAllMegaSenaDraws {
 
     @Override
     public MegaSenaDrawsUpdateHistory execute(final MultipartFile file) {
-        // Store file
         storageService.store(file);
 
-        MegaSenaDrawsUpdateHistoryEntity MegaSenaDrawsUpdateHistoryEntity =
-                new MegaSenaDrawsUpdateHistoryEntity(null, "file", LocalDateTime.now(), file.getOriginalFilename());
-        MegaSenaDrawsUpdateHistory megaSenaDrawsUpdateHistory = megaSenaDrawsUpdateHistorPort.execute(MegaSenaDrawsUpdateHistoryEntity);
+        MegaSenaDrawsUpdateHistory megaSenaDrawsUpdateHistory = registerTheImportFile(file);
 
-        saveAllRegistries(file, megaSenaDrawsUpdateHistory);
+        saveAllRegistriesUnsavedBefore(file, megaSenaDrawsUpdateHistory);
 
         return megaSenaDrawsUpdateHistory;
     }
 
-    private void saveAllRegistries(final MultipartFile file, final MegaSenaDrawsUpdateHistory megaSenaDrawsUpdateHistory) {
+    private MegaSenaDrawsUpdateHistory registerTheImportFile(MultipartFile file) {
+        MegaSenaDrawsUpdateHistoryEntity MegaSenaDrawsUpdateHistoryEntity =
+                new MegaSenaDrawsUpdateHistoryEntity(
+                        null, "file", LocalDateTime.now(), file.getOriginalFilename());
+        return megaSenaDrawsUpdateHistorPort.execute(MegaSenaDrawsUpdateHistoryEntity);
+    }
+
+    private void saveAllRegistriesUnsavedBefore(
+            final MultipartFile file, final MegaSenaDrawsUpdateHistory megaSenaDrawsUpdateHistory) {
         List<MegaSena> savedList = megaSenaDrawsPort.list();
 
-        List<MegaSena> itensFromFile = readAllRegisters(file, megaSenaDrawsUpdateHistory);
+        List<MegaSena> itemsFromFile = readAllRegisters(file, megaSenaDrawsUpdateHistory);
 
-        List<MegaSena> listToSave = itensFromFile.stream().filter( item -> {
+        List<MegaSena> listToSave = itemsFromFile.stream().filter( item -> {
             return savedList.stream().noneMatch(subItem -> {
                 return subItem.dataSorteio().equals(item.dataSorteio());
             });
@@ -68,7 +73,8 @@ public class UpdateAllMegaSenaDrawsUseCase implements UpdateAllMegaSenaDraws {
         megaSenaDrawsPort.saveAll(listToSave);
     }
 
-    private List<MegaSena> readAllRegisters(final MultipartFile file, final MegaSenaDrawsUpdateHistory megaSenaDrawsUpdateHistory) {
+    private List<MegaSena> readAllRegisters(
+            final MultipartFile file, final MegaSenaDrawsUpdateHistory megaSenaDrawsUpdateHistory) {
         List<MegaSena> resultList = new ArrayList<>();
 
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
@@ -128,7 +134,7 @@ public class UpdateAllMegaSenaDrawsUseCase implements UpdateAllMegaSenaDraws {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error reading Excel file", e);
         }
         return resultList;
     }

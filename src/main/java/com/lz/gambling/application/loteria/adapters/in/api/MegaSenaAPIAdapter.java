@@ -2,7 +2,6 @@ package com.lz.gambling.application.loteria.adapters.in.api;
 
 import com.lz.gambling.application.loteria.adapters.in.api.dtos.request.MegaSenaRequest;
 import com.lz.gambling.application.loteria.adapters.in.api.dtos.response.MegaSenaResponse;
-import com.lz.gambling.application.loteria.adapters.out.postgres.entities.MegaSenaDrawsUpdateHistoryEntity;
 import com.lz.gambling.domain.loteriascaixa.model.MegaSenaDrawsUpdateHistory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +12,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 public interface MegaSenaAPIAdapter {
 
-    ResponseEntity<MegaSenaResponse> createMegaSena(@RequestParam final MegaSenaRequest megaSena);
+    ResponseEntity<MegaSenaResponse> createMegaSenaDraws(@RequestParam final MegaSenaRequest megaSena);
 
     @PostMapping(path = "/update-all-draws", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<MegaSenaDrawsUpdateHistory> updateAllDraws
+    ResponseEntity<MegaSenaDrawsUpdateHistory> importAllMegaSenaDraws
             (@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes);
 }

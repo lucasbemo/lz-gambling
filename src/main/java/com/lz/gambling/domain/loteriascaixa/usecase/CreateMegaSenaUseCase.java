@@ -1,7 +1,7 @@
 package com.lz.gambling.domain.loteriascaixa.usecase;
 
 import com.lz.gambling.domain.loteriascaixa.model.MegaSena;
-import com.lz.gambling.domain.loteriascaixa.port.MegaSenaPort;
+import com.lz.gambling.domain.loteriascaixa.port.MegaSenaDrawsPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 public class CreateMegaSenaUseCase implements CreateMegaSena {
 
     @Autowired
-    private MegaSenaPort megaSenaPort;
+    private MegaSenaDrawsPort megaSenaDrawsPort;
 
     @Override
     public MegaSena execute(final MegaSena megasena) {
-        return megaSenaPort.save(megasena);
+        return megaSenaDrawsPort.save(megasena);
     }
 }

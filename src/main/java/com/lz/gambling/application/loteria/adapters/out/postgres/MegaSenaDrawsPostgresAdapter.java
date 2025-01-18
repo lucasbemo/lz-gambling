@@ -1,32 +1,41 @@
 package com.lz.gambling.application.loteria.adapters.out.postgres;
 
-import com.lz.gambling.application.loteria.adapters.out.postgres.entities.MegaSenaEntity;
+import com.lz.gambling.application.loteria.adapters.out.postgres.entities.MegaSenaDrawsEntity;
 import com.lz.gambling.application.loteria.adapters.out.postgres.repositories.MegaSenaJPARepository;
 import com.lz.gambling.domain.loteriascaixa.model.MegaSena;
-import com.lz.gambling.domain.loteriascaixa.port.MegaSenaPort;
+import com.lz.gambling.domain.loteriascaixa.port.MegaSenaDrawsPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class MegaSenaPostgresAdapter implements MegaSenaPort {
+public class MegaSenaDrawsPostgresAdapter implements MegaSenaDrawsPort {
 
     private MegaSenaJPARepository megaSenaJPARepository;
 
     @Autowired
-    public MegaSenaPostgresAdapter(final MegaSenaJPARepository megaSenaJPARepository) {
+    public MegaSenaDrawsPostgresAdapter(final MegaSenaJPARepository megaSenaJPARepository) {
         this.megaSenaJPARepository = megaSenaJPARepository;
     }
 
     @Override
     public MegaSena save(final MegaSena megaSena) {
-        return megaSenaJPARepository.save(MegaSenaEntity.fromDomain(megaSena)).toDomain();
+        return megaSenaJPARepository.save(MegaSenaDrawsEntity.fromDomain(megaSena)).toDomain();
+    }
+
+    @Override
+    public List<MegaSena> saveAll(List<MegaSena> listMegaSenaDraws) {
+
+         List<MegaSenaDrawsEntity> megaSenaDrawsEntity = megaSenaJPARepository
+                 .saveAll(MegaSenaDrawsEntity.fromDomain(listMegaSenaDraws));
+
+         return MegaSena.toDomain(megaSenaDrawsEntity);
     }
 
     @Override
     public List<MegaSena> list() {
-        return List.of();
+        return MegaSena.toDomain(megaSenaJPARepository.findAll());
     }
 
     @Override

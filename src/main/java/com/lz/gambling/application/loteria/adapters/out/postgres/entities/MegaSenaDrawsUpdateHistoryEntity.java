@@ -1,14 +1,12 @@
 package com.lz.gambling.application.loteria.adapters.out.postgres.entities;
 
 import com.lz.gambling.domain.loteriascaixa.model.MegaSenaDrawsUpdateHistory;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "MEGASENA_DRAWS_UPDATE_HISTORY")
+@Table(name =  "MEGASENA_DRAWS_UPDATE_HISTORY")
 public class MegaSenaDrawsUpdateHistoryEntity {
 
     @Id

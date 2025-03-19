@@ -10,6 +10,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 @Service
 public class ImportAllMegaSenaDrawsUseCase implements ImportAllMegaSenaDraws {
 
+    private Logger logger = LoggerFactory.getLogger(ImportAllMegaSenaDrawsUseCase.class);
     private final HandleMegaSenaFile storageService;
     private final MegaSenaDrawsUpdateHistorPort megaSenaDrawsUpdateHistorPort;
     private final MegaSenaDrawsPort megaSenaDrawsPort;
@@ -80,14 +83,17 @@ public class ImportAllMegaSenaDrawsUseCase implements ImportAllMegaSenaDraws {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
+            int totalRows = sheet.getLastRowNum();
             if (rowIterator.hasNext()) rowIterator.next(); // Skip header
 
             int idx=0;
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
 
+                logger.info("Row: " + idx);
+
                 //TODO
-                if (idx==2000)
+                if (row.getRowNum() > totalRows)
                     break;
                 idx++;
 

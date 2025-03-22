@@ -113,4 +113,4 @@ jobs:
       - name: Pull na imagem
         run: sudo docker pull ozamboni/lz-gambling:main-231d4ec
       - name: Run docker container
-        run: docker run -d -p 8080:8080 --name gambling ozamboni/lz-gambling
+        run: sudo docker run -d -p 8080:8080 --name gambling ozamboni/lz-gambling
